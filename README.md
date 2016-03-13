@@ -1,7 +1,7 @@
 This repository includes the support material for the following blog post: 
 http://www.machinalis.com/blog/python-for-geospatial-data-processing/
 
-To try this code you need to install the packages described in the *requirements.txt* file 
+To try this code you need to install the packages described in the [requirements.txt](https://raw.githubusercontent.com/machinalis/satimg/master/requirements.txt) file 
 and you can use [this sample data](https://drive.google.com/open?id=0B64odlXwDnHeUVBWNXVocU84SkU)
 
 #### Build GDAL from source
