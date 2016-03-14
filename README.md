@@ -6,8 +6,7 @@ and you can use [this sample data](https://drive.google.com/open?id=0B64odlXwDnH
 
 #### Build GDAL from source
 
-This code was developed using the GDAL library, version 2.0.1. You need to install it in your machine before installing the Python bindings. 
-It is all explained in the following links:
+This code was developed in Ubuntu (Linux) using the GDAL library, version 2.0.1. You need to install it in your machine before installing the Python bindings. It is all explained in the following links:
 
 * Download: http://download.osgeo.org/gdal/2.0.1/gdal-2.0.1.tar.gz
 * Install: https://trac.osgeo.org/gdal/wiki/GdalOgrInPython
