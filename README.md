@@ -22,6 +22,6 @@ This code was developed in Ubuntu (Linux) using the GDAL library, version 2.0.1.
 http://www.machinalis.com/blog/obia/
 
 This post is a continuation of the first one. The development of the subject is in a 
-[Jupyter Notebook](https://raw.githubusercontent.com/machinalis/satimg/master/object_based_image_analysis.ipynb)
+[Jupyter Notebook](https://github.com/machinalis/satimg/blob/master/object_based_image_analysis.ipynb)
 
 To try it out, you can use [the same data as in the other post](https://drive.google.com/open?id=0B64odlXwDnHeUVBWNXVocU84SkU).
