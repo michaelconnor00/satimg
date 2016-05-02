@@ -198,7 +198,7 @@ if __name__ == "__main__":
         files = [f for f in os.listdir(train_data_path) if f.endswith('.shp')]
         classes = [f.split('.')[0] for f in files]
         shapefiles = [os.path.join(train_data_path, f) for f in files if f.endswith('.shp')]
-    except FileNotFoundError as e:
+    except OSError.FileNotFoundError as e:
         report_and_exit(str(e))
 
     labeled_pixels = vectors_to_raster(shapefiles, rows, cols, geo_transform, proj)
@@ -237,7 +237,7 @@ if __name__ == "__main__":
         logger.debug("Process the verification (testing) data")
         try:
             shapefiles = [os.path.join(validation_data_path, "%s.shp" % c) for c in classes]
-        except FileNotFoundError as e:
+        except OSError.FileNotFoundError as e:
             report_and_exit(str(e))
 
         verification_pixels = vectors_to_raster(shapefiles, rows, cols, geo_transform, proj)
