@@ -1,27 +1,20 @@
 """
 Classify a multi-band, satellite image.
-
 Usage:
     classify.py <input_fname> <train_data_path> <output_fname> [--method=<classification_method>]
                                                                [--validation=<validation_data_path>]
                                                                [--verbose]
     classify.py -h | --help
-
 The <input_fname> argument must be the path to a GeoTIFF image.
-
 The <train_data_path> argument must be a path to a directory with vector data files
 (in shapefile format). These vectors must specify the target class of the training pixels. One file
 per class. The base filename (without extension) is taken as class name.
-
 If a <validation_data_path> is given, then the validation vector files must correspond by name with
 the training data. That is, if there is a training file train_data_path/A.shp then the corresponding
 validation_data_path/A.shp is expected.
-
 The <output_fname> argument must be a filename where the classification will be saved (GeoTIFF format).
-
 No geographic transformation is performed on the data. The raster and vector data geographic
 parameters must match.
-
 Options:
   -h --help  Show this screen.
   --method=<classification_method>      Classification method to use: random-forest (for random
@@ -32,7 +25,6 @@ Options:
                                         target class of the validation pixels. A classification
                                         accuracy report is writen to stdout.
   --verbose                             If given, debug output is writen to stdout.
-
 """
 import logging
 import numpy as np
@@ -72,7 +64,6 @@ def create_mask_from_vector(vector_data_path, cols, rows, geo_transform, project
                             output_fname='', dataset_format='MEM'):
     """
     Rasterize the given vector (wrapper for gdal.RasterizeLayer). Return a gdal.Dataset.
-
     :param vector_data_path: Path to a shapefile
     :param cols: Number of columns of the result
     :param rows: Number of rows of the result
@@ -83,7 +74,6 @@ def create_mask_from_vector(vector_data_path, cols, rows, geo_transform, project
     :param target_value: Pixel value for the pixels. Must be a valid gdal.GDT_UInt16 value.
     :param output_fname: If the dataset_format is GeoTIFF, this is the output file name
     :param dataset_format: The gdal.Dataset driver name. [default: MEM]
-
     """
     data_source = gdal.OpenEx(vector_data_path, gdal.OF_VECTOR)
     if data_source is None:
@@ -100,11 +90,9 @@ def create_mask_from_vector(vector_data_path, cols, rows, geo_transform, project
 def vectors_to_raster(file_paths, rows, cols, geo_transform, projection):
     """
     Rasterize, in a single image, all the vectors in the given directory.
-
     The data of each file will be assigned the same pixel value. This value is defined by the order
     of the file in file_paths, starting with 1: so the points/poligons/etc in the same file will be
     marked as 1, those in the second file will be 2, and so on.
-
     :param file_paths: Path to a directory with shapefiles
     :param rows: Number of rows of the result
     :param cols: Number of columns of the result
@@ -112,7 +100,6 @@ def vectors_to_raster(file_paths, rows, cols, geo_transform, projection):
                           transforming between pixel/line (P,L) raster space, and projection
                           coordinates (Xp,Yp) space.
     :param projection: Projection definition string (Returned by gdal.Dataset.GetProjectionRef)
-
     """
     labeled_pixels = np.zeros((rows, cols))
     for i, path in enumerate(file_paths):
@@ -131,14 +118,12 @@ def vectors_to_raster(file_paths, rows, cols, geo_transform, projection):
 def write_geotiff(fname, data, geo_transform, projection, data_type=gdal.GDT_Byte):
     """
     Create a GeoTIFF file with the given data.
-
     :param fname: Path to a directory with shapefiles
     :param data: Number of rows of the result
     :param geo_transform: Returned value of gdal.Dataset.GetGeoTransform (coefficients for
                           transforming between pixel/line (P,L) raster space, and projection
                           coordinates (Xp,Yp) space.
     :param projection: Projection definition string (Returned by gdal.Dataset.GetProjectionRef)
-
     """
     driver = gdal.GetDriverByName('GTiff')
     rows, cols = data.shape
@@ -213,7 +198,7 @@ if __name__ == "__main__":
         files = [f for f in os.listdir(train_data_path) if f.endswith('.shp')]
         classes = [f.split('.')[0] for f in files]
         shapefiles = [os.path.join(train_data_path, f) for f in files if f.endswith('.shp')]
-    except FileNotFoundError as e:
+    except OSError.FileNotFoundError as e:
         report_and_exit(str(e))
 
     labeled_pixels = vectors_to_raster(shapefiles, rows, cols, geo_transform, proj)
@@ -252,7 +237,7 @@ if __name__ == "__main__":
         logger.debug("Process the verification (testing) data")
         try:
             shapefiles = [os.path.join(validation_data_path, "%s.shp" % c) for c in classes]
-        except FileNotFoundError as e:
+        except OSError.FileNotFoundError as e:
             report_and_exit(str(e))
 
         verification_pixels = vectors_to_raster(shapefiles, rows, cols, geo_transform, proj)
