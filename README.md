@@ -31,7 +31,7 @@ To try it out, you can use [the same data as in the other post](https://drive.go
 
 http://www.machinalis.com/blog/searching-for-aliens/
 
-The development of the subject is in a [Jupyter Notebook](https://github.com/machinalis/satimg/blob/master/)
+The development of the subject is in a [Jupyter Notebook](https://github.com/machinalis/satimg/blob/master/Searching%20for%20aliens.ipynb)
 
 It has a couple of specific requirements:
 
