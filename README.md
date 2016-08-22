@@ -25,3 +25,15 @@ This post is a continuation of the first one. The development of the subject is 
 [Jupyter Notebook](https://github.com/machinalis/satimg/blob/master/object_based_image_analysis.ipynb)
 
 To try it out, you can use [the same data as in the other post](https://drive.google.com/open?id=0B64odlXwDnHeUVBWNXVocU84SkU).
+
+
+# Searching for aliens 
+
+http://www.machinalis.com/blog/searching-for-aliens/
+
+The development of the subject is in a [Jupyter Notebook](https://github.com/machinalis/satimg/blob/master/)
+
+It has a couple of specific requirements:
+
+* affine==2.0.0.post1
+* OpenCV (which I installed following this: https://gist.github.com/Asymptote/6d95396a1a45b55e3b63c3ee4d2b7c24)
