@@ -47,7 +47,7 @@ def write_geotiff(fname, data, geo_transform, projection):
     dataset = None  # Close the file
 
 
-raster_data_path = "data/image/2298119ene2016recorteTT.tif"
+raster_data_path = "sentinel/S2A_OPER_MSI_L1C_TL_MPS__20160726T194114_20160727T002815_A005716_T10UDF_N02_04_01.tif"
 output_fname = "classification.tiff"
 train_data_path = "data/train"
 validation_data_path = "data/test"
@@ -97,4 +97,3 @@ print("Classification report:\n%s" %
                                     target_names=target_names))
 print("Classification accuracy: %f" %
       metrics.accuracy_score(verification_labels, predicted_labels))
-

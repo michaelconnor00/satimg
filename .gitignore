@@ -1,0 +1,8 @@
+sentinel/pg_sentinel_suset.tif
+landsat8/48_23/
+landsat8/clumps_out.kea
+landsat8/new_clip/
+*.pyc
+.env
+.ipynb_checkpoints/
+data/
