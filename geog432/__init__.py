@@ -5,58 +5,30 @@ import os
 from osgeo import gdal, gdal_array
 from matplotlib import pyplot
 import numpy as np
-import rsgislib
-from rsgislib import imageutils
+
 
 gdal.UseExceptions()
 
-# def stack_bands(path):
-#     """
-#     This function will read all files with a TIF, TIFF, tiff, tif extension
-#     read as an array combine and write out as an array.
-#     NOTE: order of the files matters, makes sure the files are in order so they are stacked correctly.
-#     :param path: path to the images to be stacked.
-#     """
-#     files = os.listdir(path)
-#     base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-#     band_arrays = []
-#     for band in files:
-#         extension = os.path.splitext(band)[1]
-#         if extension in ['.TIF', '.TIFF', '.tiff', '.tif']:
-#             full_filename = os.path.join(base_dir, path, band)
-#             print('Reading: %s' % full_filename)
-#             img = gdal.Open(full_filename)
-#             band_ary = img.ReadAsArray()
-#             band_arrays.append(band_ary)
-#     stacked = np.array(band_arrays)
-#     # print(type(stacked.astype("int")), stacked.astype("int"))
-#     output_file = os.path.join(base_dir, path, "stacked.tif")
-#     proto = os.path.join(base_dir, path, files[0])
-#     out_array = gdal_array.SaveArray(stacked, output_file, "GTiff", gdal.Open(proto))
-#     out_array = None
-#     print('Stacked GTIff written to %s' % output_file)
 
-def stack_bands(path):
-    """
-    This function will read all files with a TIF, TIFF, tiff, tif extension
-    read as an array combine and write out as an array.
-    NOTE: order of the files matters, makes sure the files are in order so they are stacked correctly.
-    :param path: path to the images to be stacked.
-    """
-    tif_exts = ['.TIF', '.TIFF', '.tiff', '.tif']
-    base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    files = os.listdir(path)
-    tif_files = [os.path.join(base_dir, f) for f in files if os.path.splitext(f)[1] in tif_exts]
-
-    bandNamesList = ['Coastal','Blue','Green','Red','NIR','SWIR1','SWIR2']
-
-    output_file = os.path.join(base_dir, path, "stacked.tif")
-
-    # Set format and type
-    gdalFormat = 'GTiff'
-    dataType = rsgislib.TYPE_16UINT
-
-    imageutils.stackImageBands(tif_files, None, output_file, None, 0, gdalFormat, dataType)
+# A list of "random" colors
+COLORS = [
+    "#000000", "#FFFF00", "#1CE6FF", "#FF34FF", "#FF4A46", "#008941", "#006FA6", "#A30059",
+    "#FFDBE5", "#7A4900", "#0000A6", "#63FFAC", "#B79762", "#004D43", "#8FB0FF", "#997D87",
+    "#5A0007", "#809693", "#FEFFE6", "#1B4400", "#4FC601", "#3B5DFF", "#4A3B53", "#FF2F80",
+    "#61615A", "#BA0900", "#6B7900", "#00C2A0", "#FFAA92", "#FF90C9", "#B903AA", "#D16100",
+    "#DDEFFF", "#000035", "#7B4F4B", "#A1C299", "#300018", "#0AA6D8", "#013349", "#00846F",
+    "#372101", "#FFB500", "#C2FFED", "#A079BF", "#CC0744", "#C0B9B2", "#C2FF99", "#001E09",
+    "#00489C", "#6F0062", "#0CBD66", "#EEC3FF", "#456D75", "#B77B68", "#7A87A1", "#788D66",
+    "#885578", "#FAD09F", "#FF8A9A", "#D157A0", "#BEC459", "#456648", "#0086ED", "#886F4C",
+    "#34362D", "#B4A8BD", "#00A6AA", "#452C2C", "#636375", "#A3C8C9", "#FF913F", "#938A81",
+    "#575329", "#00FECF", "#B05B6F", "#8CD0FF", "#3B9700", "#04F757", "#C8A1A1", "#1E6E00",
+    "#7900D7", "#A77500", "#6367A9", "#A05837", "#6B002C", "#772600", "#D790FF", "#9B9700",
+    "#549E79", "#FFF69F", "#201625", "#72418F", "#BC23FF", "#99ADC0", "#3A2465", "#922329",
+    "#5B4534", "#FDE8DC", "#404E55", "#0089A3", "#CB7E98", "#A4E804", "#324E72", "#6A3A4C",
+    "#83AB58", "#001C1E", "#D1F7CE", "#004B28", "#C8D0F6", "#A3A489", "#806C66", "#222800",
+    "#BF5650", "#E83000", "#66796D", "#DA007C", "#FF1A59", "#8ADBB4", "#1E0200", "#5B4E51",
+    "#C895C5", "#320033", "#FF6832", "#66E1D3", "#CFCDAC", "#D0AC94", "#7ED379", "#012C58"
+]
 
 
 def img_to_band_data(img_path):
@@ -90,3 +62,43 @@ def raster_show(bands_data, rgb_index):
     rgb = np.dstack([r,g,b])
     pyplot.imshow(rgb/255)
     pyplot.show()
+
+def write_geotiff(fname, data, geo_transform, projection, classes, data_type=gdal.GDT_Byte):
+    """
+    Create a GeoTIFF file with the given data.
+    :param fname: Path to a directory with shapefiles
+    :param data: Number of rows of the result
+    :param geo_transform: Returned value of gdal.Dataset.GetGeoTransform (coefficients for
+                          transforming between pixel/line (P,L) raster space, and projection
+                          coordinates (Xp,Yp) space.
+    :param projection: Projection definition string (Returned by gdal.Dataset.GetProjectionRef)
+    """
+    driver = gdal.GetDriverByName('GTiff')
+    rows, cols = data.shape
+    dataset = driver.Create(fname, cols, rows, 1, data_type)
+    dataset.SetGeoTransform(geo_transform)
+    dataset.SetProjection(projection)
+    band = dataset.GetRasterBand(1)
+    band.WriteArray(data)
+
+    ct = gdal.ColorTable()
+    for pixel_value in range(len(classes)+1):
+        color_hex = COLORS[pixel_value]
+        r = int(color_hex[1:3], 16)
+        g = int(color_hex[3:5], 16)
+        b = int(color_hex[5:7], 16)
+        ct.SetColorEntry(pixel_value, (r, g, b, 255))
+    band.SetColorTable(ct)
+
+    metadata = {
+        'TIFFTAG_COPYRIGHT': 'CC BY 4.0',
+        'TIFFTAG_DOCUMENTNAME': 'classification',
+        'TIFFTAG_IMAGEDESCRIPTION': 'Supervised classification.',
+        'TIFFTAG_MAXSAMPLEVALUE': str(len(classes)),
+        'TIFFTAG_MINSAMPLEVALUE': '0',
+        'TIFFTAG_SOFTWARE': 'Python, GDAL, scikit-learn'
+    }
+    dataset.SetMetadata(metadata)
+
+    dataset = None  # Close the file
+    return
